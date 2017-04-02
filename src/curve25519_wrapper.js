@@ -20,6 +20,7 @@ var Internal = Internal || {};
     basepoint[0] = 9;
 
     Internal.curve25519 = {
+        // export const keyPair = (privKey) => {};
         keyPair: function(privKey) {
             var priv = new Uint8Array(privKey);
             priv[0]  &= 248;
@@ -49,6 +50,7 @@ var Internal = Internal || {};
 
             return { pubKey: res.buffer, privKey: priv.buffer };
         },
+        // export const sharedSecret = (pubKey, privKey) => {};
         sharedSecret: function(pubKey, privKey) {
             // Where to store the result
             var sharedKey_ptr = Module._malloc(32);
@@ -74,6 +76,7 @@ var Internal = Internal || {};
 
             return res.buffer;
         },
+        // export const sign = (privKey, message) => {};
         sign: function(privKey, message) {
             // Where to store the result
             var signature_ptr = Module._malloc(64);
@@ -98,6 +101,7 @@ var Internal = Internal || {};
 
             return res.buffer;
         },
+        // export const verify = (pubKey, message, sig) => {};
         verify: function(pubKey, message, sig) {
             // Get a pointer to their public key
             var publicKey_ptr = _allocate(new Uint8Array(pubKey));
@@ -122,23 +126,31 @@ var Internal = Internal || {};
     };
 
     Internal.curve25519_async = {
+        // export const asyncKeyPair = (privKey) => {};
         keyPair: function(privKey) {
             return new Promise(function(resolve) {
+                // resolve(curve25519.keyPair(privKey));
                 resolve(Internal.curve25519.keyPair(privKey));
             });
         },
+        // export const asyncSharedSecret = (pubKey, privKey) => {};
         sharedSecret: function(pubKey, privKey) {
             return new Promise(function(resolve) {
+                // resolve(curve25519.sharedSecret(pubKey, privKey));
                 resolve(Internal.curve25519.sharedSecret(pubKey, privKey));
             });
         },
+        // export const asyncSign = (privKey, message) => {};
         sign: function(privKey, message) {
             return new Promise(function(resolve) {
+                // resolve(curve25519.sign(privKey, message));
                 resolve(Internal.curve25519.sign(privKey, message));
             });
         },
+        // export const asyncVerify = (pubKey, message, sig) => {};
         verify: function(pubKey, message, sig) {
             return new Promise(function(resolve, reject) {
+                // if (curve25519.verify(pubKey, message, sig)) {
                 if (Internal.curve25519.verify(pubKey, message, sig)) {
                     reject(new Error("Invalid signature"));
                 } else {

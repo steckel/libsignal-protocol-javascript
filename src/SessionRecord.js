@@ -4,16 +4,23 @@
 
 var Internal = Internal || {};
 
+// export BaseKeyType = {};
 Internal.BaseKeyType = {
   OURS: 1,
   THEIRS: 2
 };
+// export ChainType = {};
 Internal.ChainType = {
   SENDING: 1,
   RECEIVING: 2
 };
 
 var ARCHIVED_STATES_MAX_LENGTH = 40;
+
+// class SessionRecord {
+//   ...
+// }
+// export default SessionRecord;
 
 Internal.SessionRecord = function() {
     'use strict';
@@ -98,6 +105,7 @@ Internal.SessionRecord = function() {
 
         getSessionByBaseKey: function(baseKey) {
             var session = this._sessions[util.toString(baseKey)];
+            // if (session && session.indexInfo.baseKeyType === BaseKeyType.OURS) {
             if (session && session.indexInfo.baseKeyType === Internal.BaseKeyType.OURS) {
                 console.log("Tried to lookup a session using our basekey");
                 return undefined;

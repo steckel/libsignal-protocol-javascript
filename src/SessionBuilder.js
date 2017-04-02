@@ -1,3 +1,15 @@
+// import crypto from "./crypto";
+// import SessionLock from "./SessionLock";
+// import SessionRecord from "./SessionRecord";
+// import BaseKeyType from "?";
+// import ChainType from "?";
+//
+// const HKDF = crypto.HKDF; // maybe?
+
+// class SessionBuilder {
+//  ...
+// }
+// export default SessionBuilder;
 function SessionBuilder(storage, remoteAddress) {
   this.remoteAddress = remoteAddress;
   this.storage = storage;
@@ -5,6 +17,7 @@ function SessionBuilder(storage, remoteAddress) {
 
 SessionBuilder.prototype = {
   processPreKey: function(device) {
+    // return SessionLock.queueJobForNumber(this.remoteAddress.toString(), function() {
     return Internal.SessionLock.queueJobForNumber(this.remoteAddress.toString(), function() {
       return this.storage.isTrustedIdentity(
           this.remoteAddress.getName(), device.identityKey
@@ -13,12 +26,14 @@ SessionBuilder.prototype = {
           throw new Error('Identity key changed');
         }
 
+        // return crypto.Ed25519Verify(
         return Internal.crypto.Ed25519Verify(
           device.identityKey,
           device.signedPreKey.publicKey,
           device.signedPreKey.signature
         );
       }).then(function() {
+        // return crypto.createKeyPair();
         return Internal.crypto.createKeyPair();
       }).then(function(baseKey) {
         var devicePreKey = (device.preKey.publicKey);
@@ -37,8 +52,10 @@ SessionBuilder.prototype = {
         return this.storage.loadSession(address).then(function(serialized) {
           var record;
           if (serialized !== undefined) {
+            // record = SessionRecord.deserialize(serialized);
             record = Internal.SessionRecord.deserialize(serialized);
           } else {
+            // record = new SessionRecord(device.identityKey, device.registrationId);
             record = new Internal.SessionRecord(device.identityKey, device.registrationId);
           }
 
@@ -137,6 +154,9 @@ SessionBuilder.prototype = {
         }
 
         return Promise.all([
+            // crypto.ECDHE(theirSignedPubKey, ourIdentityKey.privKey),
+            // crypto.ECDHE(theirIdentityPubKey, ourSignedKey.privKey),
+            // crypto.ECDHE(theirSignedPubKey, ourSignedKey.privKey)
             Internal.crypto.ECDHE(theirSignedPubKey, ourIdentityKey.privKey),
             Internal.crypto.ECDHE(theirIdentityPubKey, ourSignedKey.privKey),
             Internal.crypto.ECDHE(theirSignedPubKey, ourSignedKey.privKey)
@@ -151,6 +171,7 @@ SessionBuilder.prototype = {
             sharedSecret.set(new Uint8Array(ecRes[2]), 32 * 3);
 
             if (ourEphemeralKey !== undefined && theirEphemeralPubKey !== undefined) {
+                // return crypto.ECDHE(
                 return Internal.crypto.ECDHE(
                     theirEphemeralPubKey, ourEphemeralKey.privKey
                 ).then(function(ecRes4) {
@@ -158,6 +179,7 @@ SessionBuilder.prototype = {
                 });
             }
         }).then(function() {
+            // return HKDF(sharedSecret.buffer, new ArrayBuffer(32), "WhisperText");
             return Internal.HKDF(sharedSecret.buffer, new ArrayBuffer(32), "WhisperText");
         }).then(function(masterKey) {
             var session = {
@@ -177,7 +199,9 @@ SessionBuilder.prototype = {
             // otherwise we figure it out when we first maybeStepRatchet with the remote's ephemeral key
             if (isInitiator) {
                 session.indexInfo.baseKey = ourEphemeralKey.pubKey;
+                // session.indexInfo.baseKeyType = BaseKeyType.OURS;
                 session.indexInfo.baseKeyType = Internal.BaseKeyType.OURS;
+                // return crypto.createKeyPair().then(function(ourSendingEphemeralKey) {
                 return Internal.crypto.createKeyPair().then(function(ourSendingEphemeralKey) {
                     session.currentRatchet.ephemeralKeyPair = ourSendingEphemeralKey;
                     return this.calculateSendingRatchet(session, theirSignedPubKey).then(function() {
@@ -186,6 +210,7 @@ SessionBuilder.prototype = {
                 }.bind(this));
             } else {
                 session.indexInfo.baseKey = theirEphemeralPubKey;
+                // session.indexInfo.baseKeyType = BaseKeyType.THEIRS;
                 session.indexInfo.baseKeyType = Internal.BaseKeyType.THEIRS;
                 session.currentRatchet.ephemeralKeyPair = ourSignedKey;
                 return session;
@@ -196,9 +221,11 @@ SessionBuilder.prototype = {
   calculateSendingRatchet: function(session, remoteKey) {
       var ratchet = session.currentRatchet;
 
+      // return crypto.ECDHE(
       return Internal.crypto.ECDHE(
           remoteKey, util.toArrayBuffer(ratchet.ephemeralKeyPair.privKey)
       ).then(function(sharedSecret) {
+          // return HKDF(
           return Internal.HKDF(
               sharedSecret, util.toArrayBuffer(ratchet.rootKey), "WhisperRatchet"
           );
@@ -206,6 +233,7 @@ SessionBuilder.prototype = {
           session[util.toString(ratchet.ephemeralKeyPair.pubKey)] = {
               messageKeys : {},
               chainKey    : { counter : -1, key : masterKey[1] },
+              // chainType   : ChainType.SENDING
               chainType   : Internal.ChainType.SENDING
           };
           ratchet.rootKey = masterKey[0];

@@ -1,3 +1,7 @@
+// class SignalProtocolAddress {
+//   ...
+// }
+// export default SignalProtocolAddress;
 function SignalProtocolAddress(name, deviceId) {
   this.name = name;
   this.deviceId = deviceId;

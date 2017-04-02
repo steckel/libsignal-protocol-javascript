@@ -8,12 +8,14 @@ var util = (function() {
     var StaticArrayBufferProto = new ArrayBuffer().__proto__;
 
     return {
+        // export const toString = (thing) => {};
         toString: function(thing) {
             if (typeof thing == 'string') {
                 return thing;
             }
             return new dcodeIO.ByteBuffer.wrap(thing).toString('binary');
         },
+        // export const toArrayBuffer = (thing) => {};
         toArrayBuffer: function(thing) {
             if (thing === undefined) {
                 return undefined;
@@ -32,6 +34,7 @@ var util = (function() {
             }
             return new dcodeIO.ByteBuffer.wrap(thing, 'binary').toArrayBuffer();
         },
+        // export const isEqual = (thing) => {};
         isEqual: function(a, b) {
             // TODO: Special-case arraybuffers, etc
             if (a === undefined || b === undefined) {

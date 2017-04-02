@@ -9,6 +9,7 @@ Internal.SessionLock = {};
 
 var jobQueue = {};
 
+ // export const queueJobForNumber = (number, runJob) => {};
 Internal.SessionLock.queueJobForNumber = function queueJobForNumber(number, runJob) {
      var runPrevious = jobQueue[number] || Promise.resolve();
      var runCurrent = jobQueue[number] = runPrevious.then(runJob, runJob);

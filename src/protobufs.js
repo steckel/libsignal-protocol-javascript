@@ -1,6 +1,8 @@
 /* vim: ts=4:sw=4 */
 var Internal = Internal || {};
 
+// const protobuf = () => {};
+// export default protobuf;
 Internal.protobuf = function() {
     'use strict';
 

@@ -44,6 +44,9 @@
         });
     }
 
+    // export class FingerprintGenerator {
+    //   ...
+    // }
     libsignal.FingerprintGenerator = function(iterations) {
         this.iterations = iterations;
     };

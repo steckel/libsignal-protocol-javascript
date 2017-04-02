@@ -1,3 +1,5 @@
+// import {getRandomBytes, } from "./crypto";
+
 (function() {
     'use strict';
 
@@ -79,12 +81,15 @@
         };
     }
 
+    // export const Curve = wrapCurve25519(Internal.curve25519);
     Internal.Curve       = wrapCurve25519(Internal.curve25519);
+    // export const Curve.async = wrapCurve25519(Internal.curve25519_async);
     Internal.Curve.async = wrapCurve25519(Internal.curve25519_async);
 
     function wrapCurve(curve) {
         return {
             generateKeyPair: function() {
+                // var privKey = getRandomBytes(32);
                 var privKey = Internal.crypto.getRandomBytes(32);
                 return curve.createKeyPair(privKey);
             },
